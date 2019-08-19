@@ -11,11 +11,10 @@
     "build": "tsc -b",
     "dev": "tsnd --respawn --debounce=100 --watch=src/ src/cli/classify.ts",
     "knex": "ts-node ./node_modules/knex/bin/cli.js --knexfile knexfile.ts",
-
+    "generate-encryption-key": "ts-node src/cli/generateEncryptionKey.ts",
     "classify": "ts-node src/cli/classify.ts",
     "ai:train": "ts-node src/cli/train.ts",
     "ai:predict": "ts-node src/cli/predict.ts",
-
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "test": "jest --passWithNoTests"
   },
@@ -40,6 +39,7 @@
     "@types/node-forge": "^0.8.6",
     "jest": "^24.9.0",
     "json-store": "^1.0.0",
+    "node-forge": "^0.8.5",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",

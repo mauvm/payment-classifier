@@ -5,6 +5,7 @@ services:
     image: mariadb:10-bionic
     env_file: .env
     environment:
+      MYSQL_HOST:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
     ports:
       - 3306:3306

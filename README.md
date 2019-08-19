@@ -19,15 +19,22 @@ cd payment-classifier
 yarn install
 ```
 
-A MySQL/MariaDB database is required for storing payments and classifiers.
-Use an existing instance and create a new database/user or configure the project and run `docker-compose up -d` for a development instance (uses configured MySQL credentials).
+1. Use remote MySQL database: create a new database and user.
+2. Setup development instance with Docker: configure first and then run `docker-compose up -d`.
 
 Configure the project:
 
 ```bash
 cp .env.example .env
-chmod 600 .env
-# > Edit .env
+chmod 600
+
+# Generate BUNQ_ENCRYPTION_KEY
+# NOTE: Add space before yarn to prevent the password from being
+#       added to terminal history (does not work on Windows)
+ yarn generate-encryption-key {password}
+
+# Add configuration values to .env
+edit .env
 ```
 
 Finally, run the database migrations:
@@ -44,13 +51,12 @@ Start by classifying payments manually (preferable more than 100):
 yarn classify
 ```
 
-This will add the payment information and given category (see `PAYMENT_CATEGORIES` in `.env`) to the `payments` table.
+This will add the payment information and given category (one of `PAYMENT_CATEGORIES` in `.env`) to the `payments` table.
 
-Next, train the [LSTM network](https://github.com/BrainJS/brain.js/blob/master/src/recurrent/lstm.js):
+Next, train the [LSTM network](https://github.com/BrainJS/brain.js#for-training-with-rnn-lstm-and-gru):
 
 ```bash
 # Optionally pass number of epochs as first argument (default = 100)
-# NOTE: 300 resulted in ECONNRESET -> The database connection was lost
 yarn ai:train 100
 ```
 
@@ -61,7 +67,7 @@ So when `yarn classify` is ran again, the predicted category will be selected by
 Additionally, you can test the classifier by using:
 
 ```bash
-yarn ai:predict "EUR, -5.50, Albert Heijn, UTRECHT, NL" # Correctly predicted Voeding
+yarn ai:predict "EUR, -5.50, Albert Heijn, UTRECHT, NL" # Correctly suggested "Voeding"
 ```
 
 ### Development
@@ -83,18 +89,17 @@ yarn test
 
 ## To Do
 
-- [ ] Train classifier after new input is given
 - [ ] Find lowest payment ID with no category (default `0`) and use as start ID for Bunq payments
 - [ ] Add `--all` flag to ignore lowest payment ID and verify categories for all Bunq payments
-- [ ] Add configure script for project (including generating Bunq encryption key)
-- [ ] Keep database connection alive (pooling?), so training can be done for at least 300 epochs
+- [ ] Train classifier after new input is given
+- [ ] Keep database connection alive (pooling?), so training can be done for at least 300 epochs.
       Adding `keepAlive` or `idleTimeoutMillis` to database config didn't work.
 
 ## Quirks & Caveats
 
 - The Bunq client paginates payments (max. 200 per page).
   Ideally we'd use async generator instead of fetching all payments at once.
-- An out-of-the-box LSTM is used ([`brain.recurrent.LSTM`](https://github.com/BrainJS/brain.js#for-training-with-rnn-lstm-and-gru)) for this prototype.
+- An out-of-the-box LSTM is used ([`brain.recurrent.LSTM`](https://github.com/BrainJS/brain.js/blob/master/src/recurrent/lstm.js)) for this prototype.
   This neural network does not scale, since each unique word is an input node of the network.
 - The payment information is simply concatted: currency, amount, IBAN, and description as comma separated string.
 - Storing the classifier JSON in a database record is not ideal, but used for convenience.
