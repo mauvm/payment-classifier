@@ -2,7 +2,13 @@
 
 > CLI for classifying Bunq payments, combined with deep learning to make suggestions.
 
-## Setup
+## Usage
+
+- Setup
+- Development
+- Training classifier
+
+### Setup
 
 First setup directory and install Node dependencies:
 
@@ -13,7 +19,10 @@ cd payment-classifier
 yarn install
 ```
 
-Then configure project:
+A MySQL/MariaDB database is required for storing payments and classifiers.
+Use an existing instance and create a new database/user or configure the project and run `docker-compose up -d` for a development instance (uses configured MySQL credentials).
+
+Configure the project:
 
 ```bash
 cp .env.example .env
@@ -27,13 +36,43 @@ Finally, run the database migrations:
 yarn knex migrate:latest
 ```
 
+### Training classifier
+
+Start by classifying payments manually (preferable more than 100):
+
+```bash
+yarn classify
+```
+
+This will add the payment information and given category (see `PAYMENT_CATEGORIES` in `.env`) to the `payments` table.
+
+Next, train the [LSTM network](https://github.com/BrainJS/brain.js/blob/master/src/recurrent/lstm.js):
+
+```bash
+# Optionally pass number of epochs as first argument (default = 100)
+# NOTE: 300 resulted in ECONNRESET -> The database connection was lost
+yarn ai:train 100
+```
+
+This will train the classifier and store the updated network in the `classifiers` table.
+The updated classifier will be used for future category predictions.
+So when `yarn classify` is ran again, the predicted category will be selected by default.
+
+Additionally, you can test the classifier by using:
+
+```bash
+yarn ai:predict "EUR, -5.50, Albert Heijn, UTRECHT, NL" # Correctly predicted Voeding
+```
+
 ### Development
 
-Use `ts-node-dev` to run TypeScript and watch for file changes:
+Instead of running `yarn classify`, you can use the following command to run `ts-node-dev`:
 
 ```bash
 yarn dev
 ```
+
+The script will be restarted on file changes.
 
 Before committing code, run:
 
@@ -42,14 +81,26 @@ yarn lint
 yarn test
 ```
 
-### Production
+## To Do
 
-Build to ES5 and run:
+- [ ] Train classifier after new input is given
+- [ ] Find lowest payment ID with no category (default `0`) and use as start ID for Bunq payments
+- [ ] Add `--all` flag to ignore lowest payment ID and verify categories for all Bunq payments
+- [ ] Add configure script for project (including generating Bunq encryption key)
+- [ ] Keep database connection alive (pooling?), so training can be done for at least 300 epochs
+      Adding `keepAlive` or `idleTimeoutMillis` to database config didn't work.
 
-```bash
-yarn build
-yarn start
-```
+## Quirks & Caveats
+
+- The Bunq client paginates payments (max. 200 per page).
+  Ideally we'd use async generator instead of fetching all payments at once.
+- An out-of-the-box LSTM is used ([`brain.recurrent.LSTM`](https://github.com/BrainJS/brain.js#for-training-with-rnn-lstm-and-gru)) for this prototype.
+  This neural network does not scale, since each unique word is an input node of the network.
+- The payment information is simply concatted: currency, amount, IBAN, and description as comma separated string.
+- Storing the classifier JSON in a database record is not ideal, but used for convenience.
+  Inspect this JSON to get a better feel for the inner workings of the classifer.
+- Bug: `ts-node-dev` does not restart when a new file is created and imported into an existing file.
+  It fails to load the new fail and says is doesn't exist.
 
 ## License
 

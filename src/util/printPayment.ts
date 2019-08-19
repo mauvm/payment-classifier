@@ -1,6 +1,5 @@
 import chalk from 'chalk'
 import { PaymentData } from './preProcessPayment'
-import Payment from '@bunq-community/bunq-js-client/dist/Api/Payment'
 
 export default function printPayment(payment: PaymentData) {
   const credited = payment.amount > 0

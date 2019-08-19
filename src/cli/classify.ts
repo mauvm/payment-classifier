@@ -1,14 +1,16 @@
 import chalk from 'chalk'
 
 // Ensure .env is loaded before process.env is used elsewhere
-import config from './config'
+import config from '../config'
 
-import fetchAllBunqPayments from './util/fetchAllBunqPayments'
-import fetchClassifiedPaymentIds from './util/fetchClassifiedPaymentIds'
-import preProcessPayment from './util/preProcessPayment'
-import printPayment from './util/printPayment'
-import promptCategory from './util/promptCategory'
-import setPaymentCategory from './util/setPaymentCategory'
+import fetchAllBunqPayments from '../util/fetchAllBunqPayments'
+import fetchClassifiedPaymentIds from '../util/fetchClassifiedPaymentIds'
+import preProcessPayment from '../util/preProcessPayment'
+import printPayment from '../util/printPayment'
+import promptCategory from '../util/promptCategory'
+import setPaymentCategory from '../util/setPaymentCategory'
+import fetchClassifier from '../util/fetchClassifier'
+import { paymentToInputString } from '../util/trainClassifier'
 
 const start = async () => {
   // TODO: This will become slow very quickly, refactor to use batches
@@ -26,6 +28,9 @@ const start = async () => {
   )
   console.log('Total unclassified payments:', unclassifiedPayments.length)
 
+  console.log(chalk.bold('=> Loading payment classifier'))
+  const classifier = await fetchClassifier()
+
   // Prompt for manual classification
   console.log(chalk.bold('=> Classifying payments'))
 
@@ -34,11 +39,17 @@ const start = async () => {
       const payment = preProcessPayment(rawPayment)
       printPayment(payment)
 
-      // TODO: Load model from database
-      // TODO: Predict category
-      // TODO: Train model after new categorie(s) are given
-      // TODO: Store new weights
-      const category: string | null = await promptCategory(payment)
+      // Predict category for payment
+      let suggested: string = String(
+        classifier.run(paymentToInputString(payment)),
+      )
+
+      if (!suggested || !config.paymentCategories.includes(suggested)) {
+        suggested = undefined
+      }
+
+      // Verify/prompt for payment category and save the payment and its category
+      const category: string | null = await promptCategory(payment, suggested)
 
       if (category) {
         await setPaymentCategory(payment, category)
@@ -52,7 +63,6 @@ const start = async () => {
 
 start()
   .then(() => {
-    console.log('Done.')
     process.exit(0)
   })
   .catch(err => {

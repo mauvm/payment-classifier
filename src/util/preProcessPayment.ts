@@ -6,6 +6,7 @@ export interface PaymentData {
   amount: number
   iban: string | null
   description: string
+  category?: string | null
   created_at: moment.Moment
 }
 

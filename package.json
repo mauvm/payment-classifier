@@ -9,14 +9,19 @@
   "private": true,
   "scripts": {
     "build": "tsc -b",
-    "start": "node built/index.js",
-    "dev": "tsnd --respawn --debounce=100 --watch=src/ src/index.ts",
+    "dev": "tsnd --respawn --debounce=100 --watch=src/ src/cli/classify.ts",
     "knex": "ts-node ./node_modules/knex/bin/cli.js --knexfile knexfile.ts",
+
+    "classify": "ts-node src/cli/classify.ts",
+    "ai:train": "ts-node src/cli/train.ts",
+    "ai:predict": "ts-node src/cli/predict.ts",
+
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@bunq-community/bunq-js-client": "^0.42.1",
+    "brain.js": "1.4.9",
     "chalk": "^2.4.2",
     "dotenv": "^8.1.0",
     "inquirer": "^6.5.1",
