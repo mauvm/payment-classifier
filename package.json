@@ -1,0 +1,46 @@
+{
+  "name": "payment-classifier",
+  "version": "0.1.0",
+  "description": "CLI for classifying bank transactions, combined with deep learning to make suggestions.",
+  "main": "src/index.ts",
+  "repository": "https://github.com/mauvm/payment-classifier.git",
+  "author": "Maurits van Mastrigt <maurits@nerdieworks.nl>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node built/index.js",
+    "dev": "tsnd --respawn --debounce=100 --watch=src/ src/index.ts",
+    "knex": "ts-node ./node_modules/knex/bin/cli.js --knexfile knexfile.ts",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "test": "jest --passWithNoTests"
+  },
+  "dependencies": {
+    "@bunq-community/bunq-js-client": "^0.42.1",
+    "chalk": "^2.4.2",
+    "dotenv": "^8.1.0",
+    "inquirer": "^6.5.1",
+    "knex": "^0.19.2",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
+    "mysql2": "^1.6.5"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/jest": "^24.0.17",
+    "@types/knex": "^0.16.1",
+    "@types/moment": "^2.13.0",
+    "@types/moment-timezone": "^0.5.12",
+    "@types/node": "^12.7.2",
+    "@types/node-forge": "^0.8.6",
+    "jest": "^24.9.0",
+    "json-store": "^1.0.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.3.0",
+    "ts-node-dev": "^1.0.0-pre.41",
+    "tslint": "^5.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "^3.5.3"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "formatter": "stylish",
+  "extends": [
+    "tslint-plugin-prettier"
+  ],
+  "rules": {
+    "prettier": true
+  }
+}
