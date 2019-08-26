@@ -89,13 +89,16 @@ yarn test
 
 ## To Do
 
-- [x] Improve classifier
-      https://www.npmjs.com/package/clean-text-utils
-      ASCII has 256 characters (per character: ascii code / 256, zero fill)
+- Improve classifier
+  - [x] Replace LSTM with ANN + letter bag
+        https://www.npmjs.com/package/clean-text-utils
+        ASCII has 256 characters (per character: ascii code / 256, zero fill)
+  - [ ] Add dropout during training
+  - [ ] Add `yarn ai:test` command
 - [ ] Find lowest payment ID with no category (default `0`) and use as start ID for Bunq payments
 - [ ] Add `--all` flag to ignore lowest payment ID and verify categories for all Bunq payments
 - [ ] Train classifier after new input is given
-- [ ] Keep database connection alive (pooling?), so training can be done for at least 300 epochs.
+- [x] Keep database connection alive (pooling?), so training can be done for at least 300 epochs.
       Adding `keepAlive` or `idleTimeoutMillis` to database config didn't work.
 
 ## Quirks & Caveats

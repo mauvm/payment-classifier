@@ -36,7 +36,12 @@ export default async function trainClassifier(
     logPeriod: 10,
     learningRate: 0.3,
     momentum: 0.1,
-    callback: null,
+    callback: () => {
+      // Keep the database connection alive
+      knex.raw('SELECT 1').then(() => {
+        // Add promise handler to execute query
+      })
+    },
     callbackPeriod: 10,
     timeout: Infinity,
   })
