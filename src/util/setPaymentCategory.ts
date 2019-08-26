@@ -1,3 +1,4 @@
+import moment from 'moment-timezone'
 import knex from '../knex'
 import { PaymentData } from './preProcessPayment'
 
@@ -11,7 +12,7 @@ export default async function setPaymentCategory(
     iban: payment.iban,
     description: payment.description,
     category,
-    created_at: payment.created_at.toDate(),
+    created_at: moment.utc(payment.created_at).toDate(),
   }
 
   // TODO: Use database transaction

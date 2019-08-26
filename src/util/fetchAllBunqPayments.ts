@@ -1,6 +1,13 @@
 import getClient from '../bunq'
 
-export default async function fetchAllBunqPayments(): Promise<any[]> {
+/**
+ * Fetch all Bunq payments
+ *
+ * @param newerId Transaction ID to start from (excluded)
+ */
+export default async function fetchAllBunqPayments(
+  newerId: number = 0,
+): Promise<any[]> {
   const bunqJSClient = await getClient()
 
   // Fetch first active user ID
@@ -17,7 +24,6 @@ export default async function fetchAllBunqPayments(): Promise<any[]> {
 
   // Gather all payments
   const allPayments: any[] = []
-  let newerId: number = 0
 
   while (true) {
     const payments = await bunqJSClient.api.payment.list(userId, accountId, {

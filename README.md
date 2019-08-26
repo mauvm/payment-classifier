@@ -48,8 +48,10 @@ yarn knex migrate:latest
 Start by classifying payments manually (preferable more than 100):
 
 ```bash
-yarn classify
+yarn classify {--all}
 ```
+
+When running `yarn classify` a second time, the latest transaction ID in the database will be used as starting point. These IDs are incremental, thus this assumes lower IDs are for older and already categorized transactions. Use `--all` so force checking all payments.
 
 This will add the payment information and given category (one of `PAYMENT_CATEGORIES` in `.env`) to the `payments` table.
 
@@ -95,8 +97,8 @@ yarn test
         ASCII has 256 characters (per character: ascii code / 256, zero fill)
   - [ ] Add dropout during training
   - [ ] Add `yarn ai:test` command
-- [ ] Find lowest payment ID with no category (default `0`) and use as start ID for Bunq payments
-- [ ] Add `--all` flag to ignore lowest payment ID and verify categories for all Bunq payments
+- [x] Find lowest payment ID with no category (default `0`) and use as start ID for Bunq payments
+- [x] Add `--all` flag to ignore lowest payment ID and verify categories for all Bunq payments
 - [ ] Train classifier after new input is given
 - [x] Keep database connection alive (pooling?), so training can be done for at least 300 epochs.
       Adding `keepAlive` or `idleTimeoutMillis` to database config didn't work.

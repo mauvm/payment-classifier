@@ -1,3 +1,4 @@
+import yargs from 'yargs'
 import chalk from 'chalk'
 
 // Ensure .env is loaded before process.env is used elsewhere
@@ -11,14 +12,24 @@ import promptCategory from '../util/promptCategory'
 import setPaymentCategory from '../util/setPaymentCategory'
 import fetchClassifier from '../util/fetchClassifier'
 import { prepareInput, selectCategory } from '../util/neuralNetwork'
+import knex from '../knex'
 
 const start = async () => {
-  // TODO: This will become slow very quickly, refactor to use batches
   console.log(chalk.bold('=> Fetching Bunq payments'))
   console.log(
     'This might take a while (depending on how much you are spending)..',
   )
-  const allPayments: any[] = await fetchAllBunqPayments()
+
+  const newerId: number = !yargs.argv.all
+    ? await knex
+        .from('payments')
+        .max('id AS id')
+        .limit(1)
+        .then((rows: any[]) => (rows[0] && rows[0].id) || 0)
+    : 0
+  console.log('Starting from transaction ID #%d', newerId)
+
+  const allPayments: any[] = await fetchAllBunqPayments(newerId)
   console.log('Total payments:', allPayments.length)
 
   console.log(chalk.bold('=> Determining unclassified payments'))

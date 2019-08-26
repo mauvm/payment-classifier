@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import moment from 'moment-timezone'
 import { PaymentData } from './preProcessPayment'
 
 export default function printPayment(payment: PaymentData) {
@@ -15,7 +16,9 @@ export default function printPayment(payment: PaymentData) {
       '|',
       payment.iban || 'NO IBAN',
       '|',
-      payment.created_at.format('ddd MMM D YYYY, HH:mm'),
+      moment(payment.created_at)
+        .tz('Europe/Amsterdam')
+        .format('ddd MMM D YYYY, HH:mm'),
     ),
   )
 }
