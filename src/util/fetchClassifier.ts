@@ -1,8 +1,10 @@
-import brain, { NeuralNetwork } from 'brain.js'
+import { NeuralNetwork } from 'brain.js'
 import knex from '../knex'
 
 export default async function fetchClassifier(): Promise<NeuralNetwork> {
-  const classifier = new brain.recurrent.LSTM()
+  const classifier = new NeuralNetwork({
+    hiddenLayers: [200, 200, 200],
+  })
 
   // Load latest configuration
   const json = await knex

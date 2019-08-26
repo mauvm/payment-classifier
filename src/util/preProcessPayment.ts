@@ -7,7 +7,7 @@ export interface PaymentData {
   iban: string | null
   description: string
   category?: string | null
-  created_at: moment.Moment
+  created_at: moment.Moment | Date
 }
 
 export default function preProcessPayment(payment: any): PaymentData {

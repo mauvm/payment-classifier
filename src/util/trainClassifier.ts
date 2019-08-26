@@ -1,12 +1,7 @@
 import { NeuralNetwork } from 'brain.js'
 import knex from '../knex'
 import { PaymentData } from './preProcessPayment'
-
-export function paymentToInputString(payment: PaymentData): string {
-  return [payment.currency, payment.amount, payment.iban, payment.description]
-    .filter(Boolean)
-    .join(', ')
-}
+import { encodeCategory, prepareInput } from './neuralNetwork'
 
 export default async function trainClassifier(
   classifier: NeuralNetwork,
@@ -28,8 +23,8 @@ export default async function trainClassifier(
 
   for (const payment of payments) {
     trainingData.push({
-      input: paymentToInputString(payment),
-      output: payment.category,
+      input: prepareInput(payment),
+      output: encodeCategory(payment.category),
     })
   }
 

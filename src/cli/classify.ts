@@ -10,7 +10,7 @@ import printPayment from '../util/printPayment'
 import promptCategory from '../util/promptCategory'
 import setPaymentCategory from '../util/setPaymentCategory'
 import fetchClassifier from '../util/fetchClassifier'
-import { paymentToInputString } from '../util/trainClassifier'
+import { prepareInput, selectCategory } from '../util/neuralNetwork'
 
 const start = async () => {
   // TODO: This will become slow very quickly, refactor to use batches
@@ -40,9 +40,8 @@ const start = async () => {
       printPayment(payment)
 
       // Predict category for payment
-      let suggested: string = String(
-        classifier.run(paymentToInputString(payment)),
-      )
+      const result: number[] | null = classifier.run(prepareInput(payment))
+      let suggested: string | null = result ? selectCategory(result) : null
 
       if (!suggested || !config.paymentCategories.includes(suggested)) {
         suggested = undefined

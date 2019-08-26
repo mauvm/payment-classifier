@@ -89,6 +89,9 @@ yarn test
 
 ## To Do
 
+- [x] Improve classifier
+      https://www.npmjs.com/package/clean-text-utils
+      ASCII has 256 characters (per character: ascii code / 256, zero fill)
 - [ ] Find lowest payment ID with no category (default `0`) and use as start ID for Bunq payments
 - [ ] Add `--all` flag to ignore lowest payment ID and verify categories for all Bunq payments
 - [ ] Train classifier after new input is given
