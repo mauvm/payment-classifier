@@ -27,7 +27,7 @@
     "inquirer": "^6.5.1",
     "knex": "^0.19.2",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.26",
+    "moment-timezone": "^0.5.35",
     "mysql2": "^1.6.5",
     "yargs": "^14.0.0"
   },
